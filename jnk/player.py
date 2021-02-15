@@ -1,36 +1,22 @@
 import random
-patterns=[
-(1000000000000,"xxxxx"),
-(-1000000000000,"ooooo"),
-(5000,"  xx  "),
-(-5000,"  oo  "),
-(60000," x xx "),
-(-60000," o oo "),
-(2000000,"xooo x"),
-(1000000,"  xxx  "),
-(-1000000,"  ooo  "),
-(15000 ,"x xx xo"),
-(10000000," xxxx "),
-(-10000000," oooo "),
-(500000,"xxx  "),
-(500000,"  xxx"),
-(-500000,"ooo  "),
-(-500000,"  ooo"),
-(60000,"xoo  x"),
-(60000,"x oo x"),
-(60000,"x  oox"),
-(2000,"xx   "),
-(2000,"   xx"),
-(-2000,"oo   "),
-(-2000,"   oo"),
-(1,"    x    "),
-(-10,"    o    "),
-(2,"     x     "),
-(4,"      x      "),
-(8,"       x       "),
+
+PATTERNS = [
+    (100, 'xxxxx'),
+    (-100, 'ooooo'),
+    (20, '   xx   '),
+    (-20, '   oo   '),
+    (40, '  xxx  '),
+    (-40, '  ooo  '),
+    (10, 'x'),
+    (-10, 'o'),
+    (5, '   ox   '),
+    (5, '   xo   '),
+    (-5, '   oxo   '),
+    (5, '   xox   '),
 ]
 class Board:
     SIZE = 15
+
     def generate_rows(self):
         rows = []
         for i in range(self.SIZE):
@@ -57,11 +43,42 @@ class Board:
             diagonals.append(diagonal)
             delka -= 1
         return diagonals
+
     def __init__(self):
         self.rows = self.generate_rows()
         self.columns = self.generate_rows()
         self.diagonals_descending = self.generate_diagonals()
         self.diagonals_ascending = self.generate_diagonals()
+
+    def row_to_string(self, row):
+        output = ''
+        for i in row:
+            if (i == 0):
+                output += ' '
+            if (i == 1):
+                output += 'x'
+            if (i == -1):
+                output += 'o'
+        return output
+
+    def evaluate_row(self, row):
+        string_row = self.row_to_string(row)
+        total_score = 0
+        for pattern in PATTERNS:
+            score, p = pattern
+            if p in string_row:
+                print(f'found pattern {p} in {row}')
+                total_score += score
+                #total_score = total_score + score
+        return total_score
+
+
+    def evaluate_position(self):
+        total_score = 0
+        for row in self.rows:
+            total_score += self.evaluate_row(row)
+        # TODO hodnotit i sloupce a diagonaly
+        return total_score
 
     def new_turn(self, row, column, player):
         self.rows[row][column] = player
@@ -78,7 +95,7 @@ class Board:
             self.diagonals_descending[descending_diagonal_number][row] = player
         #self.print_all()
 
-    def get(self,row,col):
+    def get(self, row, col):
         return self.rows[row][col]
 
     def print_all(self):
@@ -94,40 +111,12 @@ class Board:
         print('asc')
         for d in self.diagonals_ascending:
             print(d)
-    def row_to_string(self,row):
-        output=" "
-        for i in row:
-            if i==0:
-                output += " "
-            if i==1:
-                output += "x"
-            if i==-1:
-                output += "o"
-        return output
-    def evaluate_row(self,row):
-        string_row=self.row_to_string(row)
-        total_score=0
-        for pattern in patterns:
-            score, p = pattern
-            if p in string_row:
-                total_score += score
-        return total_score	
-    def evaluate_position(self):
-        score=0
-        for row in self.rows:
-            score += self.evaluate_row(row)
-        for row in self.columns:
-            score += self.evaluate_row(row)
-        for row in self.diagonals_ascending:
-            score += self.evaluate_row(row)
-        for row in self.diagonals_descending:
-            score += self.evaluate_row(row)
-        return score
+
 class Player:
     def __init__(self, player_sign):
         self.sign = 1
         self.opponent_sign = -1
-        self.name = 'Vrba'
+        self.name = 'Petr Junek'
         self.board = Board()
         random.seed(17)
 
