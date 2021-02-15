@@ -8,7 +8,7 @@ import janmrzilek.player
 from gomoku_tournament import GomokuTournament
 
 playerX = window.player.Player(1)
-playerO = janmrzilek.player.Player(-1)
+playerO = svecova.player02.Player(-1)
 
 tournament = GomokuTournament(playerX, playerO, 300)
 winner = tournament.game()
