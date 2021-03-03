@@ -1,8 +1,8 @@
 import random
 
 PATTERNS = [
-    (10000000000000000000000000000000, 'xxxxx'),
-    (-100000000000000000000000000000000, 'ooooo'),
+    (100000000000000000000000000000000000000000000000000, 'xxxxx'),
+    (-1000000000000000000000000000000000000000000000000000, 'ooooo'),
     
     (1, '       x       '),
     
@@ -55,20 +55,20 @@ class Board:
 
     def generate_diagonals(self):
         diagonals = []
-        delka = 1
+        length = 1
         for i in range(self.SIZE):
             diagonal = []
-            for j in range(delka):
+            for j in range(length):
                 diagonal.append(0)
             diagonals.append(diagonal)
-            delka += 1
-        delka = 14
+            length += 1
+        length = 14
         for i in range(self.SIZE - 1):
             diagonal = []
-            for j in range(delka):
+            for j in range(length):
                 diagonal.append(0)
             diagonals.append(diagonal)
-            delka -= 1
+            length -= 1
         return diagonals
 
     def __init__(self):
@@ -94,7 +94,7 @@ class Board:
         for pattern in PATTERNS:
             score, p = pattern
             if p in string_row:
-                print(f'found pattern {p} in {row}')
+                #print(f'found pattern {p} in {row}')
                 total_score += score
         return total_score
 
@@ -143,19 +143,34 @@ class Board:
         for d in self.diagonals_ascending:
             print(d)
 
+class Opponent:
+    def __init__(self, player_sign):
+        self.sign = -1
+        self.opponent_sign = 1
+        self.name = 'opponent'
+        self.board = Board()
+
+    def pick_best_op_turn(self):
+        best_op_score = -float('inf')
+        best_op_turn = None
+        for row in range(15):
+            for col in range(15):
+                if (self.board.get(row, col) != 0): continue
+                self.board.new_turn(row, col, self.sign)
+                score = self.board.evaluate_position()
+                if score > best_op_score:
+                    best_op_turn = (row, col)
+                    best_op_score = score
+                self.board.new_turn(row, col, 0)
+        print ("best opponent turn: "+str(best_op_turn))
+		
+
 class Player:
     def __init__(self, player_sign):
         self.sign = 1
         self.opponent_sign = -1
         self.name = 'Sebastian bot'
         self.board = Board()
-        random.seed(17)
-
-    def pick_random_valid_turn(self):
-        while True:
-            row = random.randint(0, 14)
-            col = random.randint(0, 14)
-            if (self.board.get(row, col) == 0): return (row, col)
 
     def pick_best_turn(self):
         best_score = -float('inf')
@@ -175,7 +190,8 @@ class Player:
         if opponent_move != None:
             row, col = opponent_move
             self.board.new_turn(row, col, self.opponent_sign)
-        #my_turn_row, my_turn_col = self.pick_random_valid_turn()
         my_turn_row, my_turn_col = self.pick_best_turn()
         self.board.new_turn(my_turn_row, my_turn_col, self.sign)
+        Opponent.pick_best_op_turn(self)
         return my_turn_row, my_turn_col
+
