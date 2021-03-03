@@ -1,31 +1,71 @@
 import random
 
 PATTERNS = [
-    (1000000000000000, 'xxxxx'),
-    (-1000000000000000, 'ooooo'),
-    (50000000000000, ' xxxx '),
-    (-50000000000000, ' oooo '),
-    (10000000000000, 'xxxx '),
-    (-10000000000000, 'oooo '),
-    (10000000000000, ' xxxx'),
-    (-10000000000000, ' oooo'),
-    (50000000, '  xxx  '),
-    (-50000000, '  ooo  '),
-    (10000000, 'xxx  '),
-    (-10000000, 'ooo  '),
-    (10000000, '  xxx'),
-    (-10000000, '  ooo'),
-    (5000, '   xx   '),
-    (-5000, '   oo   '),
-    (1000, 'xx   '),
-    (-1000, 'oo   '),
-    (1000, '   xx'),
-    (-1000, '   oo'),
-    (10, '  x x  '),
-    (-10, '  o o  '),
-    (1, '    x    '),
-    (-1, '    o    '),
-    # TODO doplnit vzory
+    ( 1000000000, 'xxxxx'),
+    (-1000000000, 'ooooo'),
+    ( 10000000, ' xxxx '),
+    (-10000000, ' oooo '),
+    ( 7000000, 'xoooox'),
+    (-7000000, 'oxxxxo'),
+    ( 5000000, 'xxxx '),
+    (-5000000, 'oooo '),
+    ( 5000000, ' xxxx'),
+    (-5000000, ' oooo'),
+    ( 2000000, 'x xxx'),
+    (-2000000, 'o ooo'),
+    ( 2000000, 'xxx x'),
+    (-2000000, 'ooo o'),
+    ( 1000000, 'xx xx'),
+    (-1000000, 'oo oo'),
+    ( 200000, 'xooo'),
+    (-200000, 'oxxx'),
+    ( 200000, 'oxoo'),
+    (-200000, 'xoxx'),
+    ( 100000, 'xooo x'),
+    (-100000, 'oxxx o'),
+    ( 100000, '  xxx  '),
+    (-100000, '  ooo  '),
+    ( 50000, 'xxx  '),
+    (-50000, 'ooo  '),
+    ( 50000, ' xxx '),
+    (-50000, ' ooo '),
+    ( 50000, '  xxx'),
+    (-50000, '  ooo'),
+    ( 20000, ' x xx '),
+    (-20000, ' o oo '),
+    ( 20000, ' xx x '),
+    (-20000, ' oo o '),
+    ( 10000, 'x xx '),
+    (-10000, 'o oo '),
+    ( 10000, 'xx x '),
+    (-10000, 'oo o '),
+    ( 10000, ' x xx'),
+    (-10000, ' o oo'),
+    ( 10000, ' xx x'),
+    (-10000, ' oo o'),
+    ( 1000, 'xoo  x'),
+    (-1000, 'oxx  o'),
+    ( 1000, 'x oo x'),
+    (-1000, 'o xx o'),
+    ( 1000, 'x  oox'),
+    (-1000, 'o  xxo'),
+    ( 1000, '   xx   '),
+    (-1000, '   oo   '),
+    ( 500, 'xx   '),
+    (-500, 'oo   '),
+    ( 500, ' xx  '),
+    (-500, ' oo  '),
+    ( 500, '  xx '),
+    (-500, '  oo '),
+    ( 500, '   xx'),
+    (-500, '   oo'),
+    ( 200, '  x x  '),
+    (-200, '  o o  '),
+    ( 10, '       x       '),
+    (-10, '       o       '),
+    ( 9, '      x      '),
+    (-9, '      o      '),
+   
 ]
 class Board:
     SIZE = 15
@@ -80,7 +120,7 @@ class Board:
         for pattern in PATTERNS:
             score, p = pattern
             if p in string_row:
-                print(f'found pattern {p} in {row}')
+                #print(f'found pattern {p} in {row}')
                 total_score += score
                 #total_score = total_score + score
         return total_score
@@ -96,7 +136,6 @@ class Board:
         for di_asc in self.diagonals_ascending:
             total_score += self.evaluate_row(di_asc)
         return total_score
-        # TODO hodnotit i sloupce a diagonaly
 
     def new_turn(self, row, column, player):
         self.rows[row][column] = player
@@ -144,6 +183,22 @@ class Player:
             col = random.randint(0, 14)
             if (self.board.get(row, col) == 0): return (row, col)
 
+    def pick_best_opponent_turn(self):
+        best_score = float('inf')
+        best_turn = None
+        for row in range(15):
+            for col in range(15):
+                if (self.board.get(row, col) != 0): continue  # pokud je místo prázdné
+                self.board.new_turn(row, col, self.opponent_sign)  # zkusí dosadit na každé místo -1
+                score = self.board.evaluate_position()  # vypočítá score
+                if score < best_score:
+                    best_turn = (row, col)
+                    best_score = score
+                self.board.new_turn(row, col, 0)  # vrátí do tabulky opět 0
+        print (best_turn)
+        print (best_score)
+        return best_turn
+
     def pick_best_turn(self):
         best_score = -float('inf')
         best_turn = None
@@ -151,19 +206,23 @@ class Player:
             for col in range(15):
                 if (self.board.get(row, col) != 0): continue
                 self.board.new_turn(row, col, self.sign)
+                #op_row, op_col = self.pick_best_opponent_turn()
+                #self.board.new_turn(op_row, op_col, self.opponent_sign) # zapsat do tabulky protihráčův tah
                 score = self.board.evaluate_position()
                 if score > best_score:
                     best_turn = (row, col)
                     best_score = score
+                #self.board.new_turn(op_row, op_col, 0)
                 self.board.new_turn(row, col, 0)
+        print (best_score)
         return best_turn
 
     def play(self, opponent_move):
         if opponent_move != None:
             row, col = opponent_move
             self.board.new_turn(row, col, self.opponent_sign)
-            my_turn_row, my_turn_col = self.pick_best_turn()
-        else:
-            my_turn_row, my_turn_col = self.pick_random_valid_turn()
+            
+        #my_turn_row, my_turn_col = self.pick_random_valid_turn()
+        my_turn_row, my_turn_col = self.pick_best_turn()
         self.board.new_turn(my_turn_row, my_turn_col, self.sign)
         return my_turn_row, my_turn_col
