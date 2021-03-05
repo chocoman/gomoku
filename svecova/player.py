@@ -152,6 +152,12 @@ class Board:
             self.diagonals_descending[descending_diagonal_number][row] = player
         #self.print_all()
 
+    def is_close_to_others(row, column):
+        if column > 0 and self.rows[row][column - 1] != 0: return True
+        if column > 0 and row > 0 and self.rows[row - 1][column - 1] != 0: return True
+        # TODO other cases
+        return False
+
     def get(self, row, col):
         return self.rows[row][col]
 
@@ -189,6 +195,7 @@ class Player:
         for row in range(15):
             for col in range(15):
                 if (self.board.get(row, col) != 0): continue  # pokud je místo prázdné
+                if (not self.board.is_close_to_others(row, col)): continue
                 self.board.new_turn(row, col, self.opponent_sign)  # zkusí dosadit na každé místo -1
                 score = self.board.evaluate_position()  # vypočítá score
                 if score < best_score:
@@ -205,6 +212,7 @@ class Player:
         for row in range(15):
             for col in range(15):
                 if (self.board.get(row, col) != 0): continue
+                if (not self.board.is_close_to_others(row, col)): continue
                 self.board.new_turn(row, col, self.sign)
                 #op_row, op_col = self.pick_best_opponent_turn()
                 #self.board.new_turn(op_row, op_col, self.opponent_sign) # zapsat do tabulky protihráčův tah
