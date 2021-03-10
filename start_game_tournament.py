@@ -14,8 +14,8 @@ import benda.player
 import honzapika.player
 import janmrzilek.player
 import lionel.player
-#import majstr.player
 import vrba.player
+import jnk.player
 
 from gomoku_tournament import GomokuTournament
 
@@ -30,9 +30,9 @@ players_and_names = [
     (benda.player, 'Benda'),
     (honzapika.player, 'Honza Pika'),
     (janmrzilek.player, 'Jan Mrzílek'),
-    (lionel.player, 'Lionel'),
-    #(majstr.player, 'Majstr'),
-    (vrba.player, 'Vrba'),
+    (lionel.player, 'Štěpán Holejšovský'),
+    (vrba.player, 'Martin Vrba'),
+    (jnk.player, 'Petr Junek'),
 ]
 try:
     os.remove('logs.txt')
