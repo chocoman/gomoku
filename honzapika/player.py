@@ -8,10 +8,9 @@ PATTERNS = [
     (-10000000, '  ooo  '),
     (10000000, '  xxx  '),
     (10000, '  o xxx x   '),
-    (-10000, ' x ooo o   '),
-    (1000,  '  x oooxo  '),
-    # TODO doplnit vzory
-]
+    (-10000, ' x ooo o   ')
+    (1000,  '  x oooxo  ')
+    (-1000,  ' o xxxox  ')
 
 
 
@@ -51,7 +50,8 @@ class Board:
         self.columns = self.generate_rows()
         self.diagonals_descending = self.generate_diagonals()
         self.diagonals_ascending = self.generate_diagonals()
-
+       
+       
     def row_to_string(self, row):
         output = ''
         for i in row:
@@ -80,9 +80,13 @@ class Board:
         for row in self.rows:
             total_score += self.evaluate_row(row)
         for col in self.columns:
-            total_score += self.evaluate_column(column)
-        # TODO hodnotit i sloupce a diagonaly
+            total_score += self.evaluate_row(col)
+        for asc in self.diagonals_ascending:
+            total_score += self.evaluate_row(asc)
+        for desc in self.diagonals_descending:
+            total_score += self.evaluate_row(desc)
         return total_score
+   
 
     def new_turn(self, row, column, player):
         self.rows[row][column] = player
@@ -123,12 +127,14 @@ class Player:
         self.name = 'Honza Pika'
         self.board = Board()
         random.seed(17)
-
+       
+       
+       
     def streak_control(self):
-        pass
+
 
     def pick_random_valid_turn(self):   #vybere náhodny validní pole pro hraní
-        while True:
+       while True:
             row = random.randint(0, 14)
             col = random.randint(0, 14)
             if (self.board.get(row, col) == 0): return (row, col)
