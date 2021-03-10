@@ -9,8 +9,8 @@ import benda.player
 import vrba.player
 from gomoku_tournament import GomokuTournament
 
-playerX = window.player.Player(1)
-playerO = svecova.player.Player(-1)
+playerX = svecova.player.Player(1)
+playerO = benda.player.Player(-1)
 
 tournament = GomokuTournament(playerX, playerO, 300)
 winner = tournament.game()

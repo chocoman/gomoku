@@ -152,10 +152,19 @@ class Board:
             self.diagonals_descending[descending_diagonal_number][row] = player
         #self.print_all()
 
-    def is_close_to_others(row, column):
+    def is_close_to_others(self, row, column):
         if column > 0 and self.rows[row][column - 1] != 0: return True
         if column > 0 and row > 0 and self.rows[row - 1][column - 1] != 0: return True
-        # TODO other cases
+        if row > 0 and self.rows[row - 1][column] != 0: return True
+        if column < 14 and self.rows[row][column + 1] != 0: return True
+        if column < 14 and row < 14 and self.rows[row + 1][column + 1] != 0: return True
+        if row < 14 and self.rows[row + 1][column] != 0: return True
+        if column > 1 and self.rows[row][column - 2] != 0: return True
+        if column > 1 and row > 1 and self.rows[row - 2][column - 2] != 0: return True
+        if row > 1 and self.rows[row - 2][column] != 0: return True
+        if column < 13 and self.rows[row][column + 2] != 0: return True
+        if column < 13 and row < 13 and self.rows[row + 2][column + 2] != 0: return True
+        if row < 13 and self.rows[row + 2][column] != 0: return True
         return False
 
     def get(self, row, col):
@@ -194,10 +203,10 @@ class Player:
         best_turn = None
         for row in range(15):
             for col in range(15):
-                if (self.board.get(row, col) != 0): continue  # pokud je místo prázdné
+                if (self.board.get(row, col) != 0): continue                # pokud je místo prázdné
                 if (not self.board.is_close_to_others(row, col)): continue
-                self.board.new_turn(row, col, self.opponent_sign)  # zkusí dosadit na každé místo -1
-                score = self.board.evaluate_position()  # vypočítá score
+                self.board.new_turn(row, col, self.opponent_sign)            # zkusí dosadit na každé místo -1
+                score = self.board.evaluate_position()                       # vypočítá score
                 if score < best_score:
                     best_turn = (row, col)
                     best_score = score
